@@ -16,7 +16,7 @@ enum Items {
 }
 
 
-const categories = {
+const categoryValue = {
   Items.vegetables:  Categories(
     'Vegetables',
     Color.fromARGB(255, 0, 255, 128),

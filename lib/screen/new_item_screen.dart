@@ -18,7 +18,7 @@ class _NewItemScreenState extends State<NewItemScreen> {
   final _fromKey = GlobalKey<FormState>();
   var _enterName = '';
   var _qunatity = 1;
-  var _selectedCategory = categories[Items.fruit];
+  var _selectedCategory = categoryValue[Items.fruit];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -78,7 +78,7 @@ class _NewItemScreenState extends State<NewItemScreen> {
                       child: DropdownButtonFormField(
                     value: _selectedCategory,
                     items: [
-                      for (final item in categories.entries)
+                      for (final item in categoryValue.entries)
                         DropdownMenuItem(
                             value: item.value,
                             child: Row(
