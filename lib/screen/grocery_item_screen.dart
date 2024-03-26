@@ -23,6 +23,7 @@ class _GroceryItemScreenState extends State<GroceryItemScreen> {
     loadData();
   }
 
+
   @override
   Widget build(BuildContext context) {
     Widget content = categoryItems.isEmpty
@@ -56,11 +57,9 @@ class _GroceryItemScreenState extends State<GroceryItemScreen> {
         actions: [
           IconButton(
               onPressed: () async {
-                final newItems = await Navigator.push<GroceryItem>(context,
+               await Navigator.push(context,
                     MaterialPageRoute(builder: (context) => NewItemScreen()));
-                setState(() {
-                  categoryItems.add(newItems!);
-                });
+               loadData();
               },
               icon: Icon(Icons.add))
         ],
@@ -69,7 +68,7 @@ class _GroceryItemScreenState extends State<GroceryItemScreen> {
     );
   }
 
-  Future<void> loadData() async {
+  void loadData() async {
     final url = Uri.https('udemy-flutter-a2778-default-rtdb.firebaseio.com',
         'shopping_list.json');
     final response = await http.get(url);
@@ -82,14 +81,14 @@ class _GroceryItemScreenState extends State<GroceryItemScreen> {
           name: list.value['name'],
           quantity: list.value['quantity'],
           categories: Categories(list.value['categories']['title'],
-              getColorFromString(list.value['categories']['color'])
-              )));
+              getColorFromString(list.value['categories']['color']))));
     }
     setState(() {
       categoryItems = category;
     });
   }
 }
+
 Color getColorFromString(String colorString) {
   // Extract the hexadecimal color value from the string
   final hexColor = colorString.split('(0x')[1].split(')')[0];

@@ -115,11 +115,11 @@ class _NewItemScreenState extends State<NewItemScreen> {
                       },
                       child: Text('Reset')),
                   ElevatedButton(
-                      onPressed: () {
+                      onPressed: () async{
                         if (_fromKey.currentState!.validate()) {
                           _fromKey.currentState!.save();
                           final url=Uri.https('udemy-flutter-a2778-default-rtdb.firebaseio.com','shopping_list.json');
-                        http.post(url,headers:{
+                       await http.post(url,headers:{
                           "content-type":"application/json",
                         },body: json.encode({
                           'name':_enterName,
@@ -130,11 +130,10 @@ class _NewItemScreenState extends State<NewItemScreen> {
                           }
                         }));
                         }
-                        // Navigator.of(context).pop(GroceryItem(
-                        //     id: DateTime.now().toIso8601String(),
-                        //     name: _enterName,
-                        //     quantity: _qunatity,
-                        //     categories: _selectedCategory!));
+                     if(!context.mounted){
+                      return;
+                     }
+                        Navigator.of(context).pop();
                       },
                       child: Text('Add'))
                 ],
