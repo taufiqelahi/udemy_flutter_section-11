@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class Categories{
-  final String categories;
+  final String title;
      final  Color color;
 
- const Categories(this.categories, this.color);
+ const Categories(this.title, this.color);
 
 }

@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:udemy_flutter_section11/data/categories.dart';
 import 'package:udemy_flutter_section11/model/grocery_item.dart';
+import 'package:http/http.dart' as http;
+
 
 class NewItemScreen extends StatefulWidget {
   const NewItemScreen({super.key});
@@ -87,7 +91,7 @@ class _NewItemScreenState extends State<NewItemScreen> {
                                 SizedBox(
                                   width: 5,
                                 ),
-                                Text(item.value.categories)
+                                Text(item.value.title)
                               ],
                             ))
                     ],
@@ -114,14 +118,23 @@ class _NewItemScreenState extends State<NewItemScreen> {
                       onPressed: () {
                         if (_fromKey.currentState!.validate()) {
                           _fromKey.currentState!.save();
-                          print(_enterName);
-                          print(_qunatity);
+                          final url=Uri.https('udemy-flutter-a2778-default-rtdb.firebaseio.com','shopping_list.json');
+                        http.post(url,headers:{
+                          "content-type":"application/json",
+                        },body: json.encode({
+                          'name':_enterName,
+                          'quantity':_qunatity,
+                          'categories':{
+                            'title':_selectedCategory!.title,
+                            'color':_selectedCategory!.color.toString()
+                          }
+                        }));
                         }
-                        Navigator.of(context).pop(GroceryItem(
-                            id: DateTime.now().toIso8601String(),
-                            name: _enterName,
-                            quantity: _qunatity,
-                            categories: _selectedCategory!));
+                        // Navigator.of(context).pop(GroceryItem(
+                        //     id: DateTime.now().toIso8601String(),
+                        //     name: _enterName,
+                        //     quantity: _qunatity,
+                        //     categories: _selectedCategory!));
                       },
                       child: Text('Add'))
                 ],
