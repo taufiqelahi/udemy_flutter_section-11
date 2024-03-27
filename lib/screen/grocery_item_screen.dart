@@ -23,43 +23,46 @@ class _GroceryItemScreenState extends State<GroceryItemScreen> {
     loadData();
   }
 
-
   @override
   Widget build(BuildContext context) {
-    Widget content = categoryItems.isEmpty
-        ? Center(
-            child: Text('No items'),
-          )
-        : ListView.builder(
-            itemCount: categoryItems.length,
-            itemBuilder: (BuildContext context, int index) {
-              final items = categoryItems[index];
-              return Dismissible(
-                key: ValueKey(items.id),
-                onDismissed: (v) {
-                  categoryItems.remove(items);
-                },
-                child: ListTile(
-                  title: Text(items.name),
-                  trailing: Text('${items.quantity}'),
-                  leading: Container(
-                    height: 20,
-                    width: 20,
-                    color: items.categories.color,
-                  ),
-                ),
-              );
+    Widget content = Center(
+      child: Text('No items'),
+    );
+    if(categoryItems.isEmpty){
+     content= Center(child: CircularProgressIndicator());
+    }
+    if (categoryItems.isNotEmpty) {
+     content= ListView.builder(
+        itemCount: categoryItems.length,
+        itemBuilder: (BuildContext context, int index) {
+          final items = categoryItems[index];
+          return Dismissible(
+            key: ValueKey(items.id),
+            onDismissed: (v) {
+              categoryItems.remove(items);
             },
+            child: ListTile(
+              title: Text(items.name),
+              trailing: Text('${items.quantity}'),
+              leading: Container(
+                height: 20,
+                width: 20,
+                color: items.categories.color,
+              ),
+            ),
           );
+        },
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text('Grocery Item'),
         actions: [
           IconButton(
               onPressed: () async {
-               await Navigator.push(context,
+                await Navigator.push(context,
                     MaterialPageRoute(builder: (context) => NewItemScreen()));
-               loadData();
+                loadData();
               },
               icon: Icon(Icons.add))
         ],
@@ -74,7 +77,6 @@ class _GroceryItemScreenState extends State<GroceryItemScreen> {
     final response = await http.get(url);
     final Map<String, dynamic> listData = jsonDecode(response.body);
     List<GroceryItem> category = [];
-    print(listData);
     for (final list in listData.entries) {
       category.add(GroceryItem(
           id: list.key,
