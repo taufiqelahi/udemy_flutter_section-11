@@ -19,6 +19,7 @@ class _NewItemScreenState extends State<NewItemScreen> {
   var _enterName = '';
   var _qunatity = 1;
   var _selectedCategory = categoryValue[Items.fruit];
+  bool isSaving=false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,14 +111,17 @@ class _NewItemScreenState extends State<NewItemScreen> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   TextButton(
-                      onPressed: () {
+                      onPressed:isSaving?null: () {
                         _fromKey.currentState!.reset();
                       },
                       child: Text('Reset')),
                   ElevatedButton(
-                      onPressed: () async{
+                      onPressed:isSaving?null: () async{
                         if (_fromKey.currentState!.validate()) {
                           _fromKey.currentState!.save();
+                          setState(() {
+                            isSaving=true;
+                          });
                           final url=Uri.https('udemy-flutter-a2778-default-rtdb.firebaseio.com','shopping_list.json');
                        await http.post(url,headers:{
                           "content-type":"application/json",
@@ -135,7 +139,7 @@ class _NewItemScreenState extends State<NewItemScreen> {
                      }
                         Navigator.of(context).pop();
                       },
-                      child: Text('Add'))
+                      child: isSaving?SizedBox(height: 16,width: 16,child: CircularProgressIndicator(),):Text('Add'))
                 ],
               )
             ],
