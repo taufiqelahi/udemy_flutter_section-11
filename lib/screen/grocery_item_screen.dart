@@ -16,6 +16,7 @@ class GroceryItemScreen extends StatefulWidget {
 
 class _GroceryItemScreenState extends State<GroceryItemScreen> {
   List<GroceryItem> categoryItems = [];
+  bool isLoading = true;
   @override
   void initState() {
     // TODO: implement initState
@@ -28,18 +29,31 @@ class _GroceryItemScreenState extends State<GroceryItemScreen> {
     Widget content = Center(
       child: Text('No items'),
     );
-    if(categoryItems.isEmpty){
-     content= Center(child: CircularProgressIndicator());
+    if (isLoading) {
+      content = Center(child: CircularProgressIndicator());
     }
     if (categoryItems.isNotEmpty) {
-     content= ListView.builder(
+      content = ListView.builder(
         itemCount: categoryItems.length,
         itemBuilder: (BuildContext context, int index) {
           final items = categoryItems[index];
           return Dismissible(
             key: ValueKey(items.id),
-            onDismissed: (v) {
-              categoryItems.remove(items);
+            onDismissed: (v) async {
+              int index = categoryItems.indexOf(items);
+              setState(() {
+                categoryItems.remove(items);
+              });
+
+              final url = Uri.https(
+                  'udemy-flutter-a2778-default-rtdb.firebaseio.com',
+                  'shopping_list/${items.id}.json');
+              final res = await http.delete(url);
+              if (res.statusCode >= 400) {
+                setState(() {
+                  categoryItems.insert(index, items);
+                });
+              }
             },
             child: ListTile(
               title: Text(items.name),
@@ -74,8 +88,17 @@ class _GroceryItemScreenState extends State<GroceryItemScreen> {
   void loadData() async {
     final url = Uri.https('udemy-flutter-a2778-default-rtdb.firebaseio.com',
         'shopping_list.json');
+
     final response = await http.get(url);
+    if (response.body == "null") {
+      setState(() {
+        isLoading = false;
+      });
+      return;
+    }
+
     final Map<String, dynamic> listData = jsonDecode(response.body);
+
     List<GroceryItem> category = [];
     for (final list in listData.entries) {
       category.add(GroceryItem(
@@ -87,6 +110,7 @@ class _GroceryItemScreenState extends State<GroceryItemScreen> {
     }
     setState(() {
       categoryItems = category;
+      isLoading = false;
     });
   }
 }
